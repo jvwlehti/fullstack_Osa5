@@ -1,5 +1,7 @@
 import { useState } from 'react'
-const Blog = ({ blog }) => {
+import propTypes from 'prop-types'
+
+const Blog = ({ blog, handleLike, removeBlog }) => {
   const [show, setShow] = useState(false)
 
   const blogStyle = {
@@ -19,11 +21,20 @@ const Blog = ({ blog }) => {
       <div>
         {show && (<div>
           <div>{blog.url}</div>
-          <div>likes {blog.likes} <button>like</button></div>
+          <div>likes {blog.likes} <button onClick={() => handleLike(blog)}>like</button></div>
           <div>{blog.user.name}</div>
+          <div>
+            <button onClick={() => removeBlog(blog)}>Remove</button>
+          </div>
         </div>)}
       </div>
     </div>)
+}
+
+Blog.propTypes = {
+  handleLike: propTypes.func.isRequired,
+  removeBlog: propTypes.func.isRequired,
+  Blog: propTypes.object.isRequired
 }
 
 export default Blog

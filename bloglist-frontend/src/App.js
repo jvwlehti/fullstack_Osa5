@@ -15,7 +15,7 @@ const App = () => {
 
   const [effectMessage, setEffectMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-  
+
   const blogRef = useRef()
 
   //hakee blogit
@@ -38,10 +38,11 @@ const App = () => {
   const logout = (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBlogUser')
+    setUser(null)
   }
 
   //lisää blogin listaan
-  const addBlog = async (blogObject) => { 
+  const addBlog = async (blogObject) => {
     blogRef.current.toggleVisibility()
     const returnedBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnedBlog))
@@ -49,6 +50,27 @@ const App = () => {
     setTimeout(() => {
       setEffectMessage(null)
     }, 5000)
+  }
+
+  //lisää tykkäyksen
+  const handleLike = async blog => {
+    await blogService.updateLikes(blog)
+    sortBlogs()
+  }
+
+  //lataa ja järjestää blogit suuruusjärjestykseen
+  const sortBlogs = () => {
+    blogService.getAll().then(blogs => {
+      setBlogs(blogs.sort((first, second) =>
+        (first.likes > second.likes) ? -1 : 1))
+    })
+  }
+
+  const removeBlog = async blog => {
+    if (window.confirm(`Remove ${blog.title} from the blogs?`)) {
+      await blogService.remove(blog)
+      sortBlogs()
+    }
   }
 
   //kirjautumisen hoitava komponentti
@@ -78,56 +100,60 @@ const App = () => {
   const createNewForm = () => (
     <div>
       <Togglable buttonLabel='create new blog' ref={blogRef}>
-      <BlogForm createBlog={addBlog}/>
-    </Togglable >
+        <BlogForm createBlog={addBlog} />
+      </Togglable >
     </div >
-  
+
   )
 
-if (user === null) {
+  if (user === null) {
+    return (
+      <div>
+        <h2>Log in to application</h2>
+        <ErrorNotification message={errorMessage} />
+        <form onSubmit={handleLogin}>
+          <div>
+            username
+            <input
+              type="text"
+              value={username}
+              name="Username"
+              onChange={({ target }) => setUsername(target.value)}
+            />
+          </div>
+          <div>
+            password
+            <input
+              type="password"
+              value={password}
+              name="Password"
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </div>
+          <button type="submit">login</button>
+        </form>
+      </div>
+    )
+  }
+
   return (
     <div>
-      <h2>Log in to application</h2>
-      <ErrorNotification message={errorMessage} />
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type="submit">login</button>
-      </form>
+      <h2>blogs</h2>
+      <Notification message={effectMessage} />
+      <p>
+        <b>{user.name}</b> logged in
+        <button onClick={logout}>logout</button>
+      </p>
+      {createNewForm()}
+      {blogs.map(blog =>
+        <Blog
+          key={blog.id}
+          blog={blog}
+          handleLike={handleLike}
+          removeBlog={removeBlog} />
+      )}
     </div>
   )
-}
-
-return (
-  <div>
-    <h2>blogs</h2>
-    <Notification message={effectMessage} />
-    <p>
-      <b>{user.name}</b> logged in
-      <button onClick={logout}>logout</button>
-    </p>
-    {createNewForm()}
-    {blogs.map(blog =>
-      <Blog key={blog.id} blog={blog} />
-    )}
-  </div>
-)
 }
 
 export default App
