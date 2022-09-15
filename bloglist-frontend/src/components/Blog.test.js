@@ -40,7 +40,7 @@ test('Check url and likes', async () => {
   expect(likes).toBeDefined()
 })
 
-test('Likebutton should be pressed twice', async () => {
+test('Like button should be pressed twice', async () => {
   const viewButton = await screen.getByText('view')
   await userEvent.click(viewButton)
 
