@@ -52,5 +52,26 @@ describe('Blog app', function() {
 
       cy.contains('Viinaa saunalla Breznevin kanssa Urho Kekkonen')
     })
+
+    describe('and blogs exists', function(){
+      beforeEach(function (){
+        cy.createBlog({ title: 'eka blogi', author: 'Pekka Bloggaaja', url: 'www.blogimaa.fi', likes:0  })
+        cy.createBlog({ title: 'toka blogi', author: 'Pekka Bloggaaja', url: 'www.blogimaa.fi', likes:0 })
+        cy.createBlog({ title: 'vika blogi', author: 'Pekka Bloggaaja', url: 'www.blogimaa.fi', likes:0 })
+      })
+      it('A blog can be liked', function(){
+        cy.contains('eka blogi').parent().as('blogi')
+        cy.get('@blogi').find('button').contains('view').click()
+        cy.get('@blogi').find('button').contains('like').click()
+        cy.get('@blogi').find('div').contains('1')
+      })
+
+      it('A blog can be deleted', function () {
+        cy.contains('toka blogi').parent().as('blog')
+        cy.get('@blog').find('button').contains('view').click()
+        cy.get('@blog').find('button').contains('Remove').click()
+        cy.get('html').should('not.contain', 'toka blogi')
+      })
+    })
   })
 })

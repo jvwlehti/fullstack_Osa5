@@ -16,15 +16,15 @@ const Blog = ({ blog, handleLike, removeBlog }) => {
     <div style={blogStyle}>
       <div>
         {blog.title} {blog.author}
-        <button onClick={() => setShow(previousShow => !previousShow)}>{show ? 'hide' : 'view'}</button>
+        <button id='viewBlogs' onClick={() => setShow(previousShow => !previousShow)}>{show ? 'hide' : 'view'}</button>
       </div>
       <div>
         {show && (<div>
           <div>{blog.url}</div>
-          <div>likes {blog.likes} <button onClick={() => handleLike(blog)}>like</button></div>
+          <div>likes {blog.likes} <button id='likeButton' onClick={() => handleLike(blog)}>like</button></div>
           <div>{blog.user.name}</div>
           <div>
-            <button onClick={() => removeBlog(blog)}>Remove</button>
+            <button id='removeBlog' onClick={() => removeBlog(blog)}>Remove</button>
           </div>
         </div>)}
       </div>
