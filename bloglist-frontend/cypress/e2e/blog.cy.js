@@ -64,6 +64,10 @@ describe('Blog app', function() {
         cy.get('@blogi').find('button').contains('view').click()
         cy.get('@blogi').find('button').contains('like').click()
         cy.get('@blogi').find('div').contains('1')
+        cy.get('@blogi').find('button').contains('like').click()
+        cy.get('@blogi').find('div').contains('2')
+        cy.get('@blogi').find('button').contains('like').click()
+        cy.get('@blogi').find('div').contains('3')
       })
 
       it('A blog can be deleted', function () {
@@ -71,6 +75,30 @@ describe('Blog app', function() {
         cy.get('@blog').find('button').contains('view').click()
         cy.get('@blog').find('button').contains('Remove').click()
         cy.get('html').should('not.contain', 'toka blogi')
+      })
+
+      it('Blogs in popularity order', function () {
+        cy.contains('eka blogi').parent().as('blogi')
+        cy.get('@blogi').find('button').contains('view').click()
+        cy.get('@blogi').find('button').contains('like').click()
+        cy.get('@blogi').find('div').contains('1')
+        cy.get('@blogi').find('button').contains('like').click()
+        cy.get('@blogi').find('div').contains('2')
+        cy.get('@blogi').find('button').contains('like').click()
+        cy.get('@blogi').find('div').contains('3')
+        cy.get('@blogi').find('button').contains('hide').click()
+
+        cy.contains('vika').parent().as('blog')
+        cy.get('@blog').find('button').contains('view').click()
+        cy.get('@blog').find('button').contains('like').click()
+        cy.get('@blog').find('div').contains('1')
+        cy.get('@blog').find('button').contains('like').click()
+        cy.get('@blog').find('div').contains('2')
+        cy.get('@blog').find('button').contains('hide').click()
+
+        cy.get('.blogs').eq(0).contains('eka blogi')
+        cy.get('.blogs').eq(1).contains('vika blogi')
+        cy.get('.blogs').eq(2).contains('toka blogi')
       })
     })
   })

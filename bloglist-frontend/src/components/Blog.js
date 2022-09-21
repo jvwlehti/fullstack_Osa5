@@ -13,7 +13,7 @@ const Blog = ({ blog, handleLike, removeBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
+    <div className='blogs' style={blogStyle}>
       <div>
         {blog.title} {blog.author}
         <button id='viewBlogs' onClick={() => setShow(previousShow => !previousShow)}>{show ? 'hide' : 'view'}</button>
